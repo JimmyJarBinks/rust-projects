@@ -13,9 +13,10 @@ Credit to [Kenney.nl] for visual and audio assets.
 [official Tetra tutorial]: https://tetra.seventeencups.net/tutorial
 [Kenney.nl]: https://www.kenney.nl/
 
-## Images
- *-INSERT-IMAGE-HERE-*
- 
+## Gameplay Images
+![Title-Screenshot](/images/Super_Pong_Title_Screenshot.png)
+![Gameplay-Screenshot](/images/Super_Pong_Gameplay_Screenshot.png)
+
 ## How to Play
 In addition to the files in this directory, you will need SDL 2.0 and include ```SDL2.dll``` in the project directory.
 
