@@ -1,6 +1,8 @@
 use crate::{scene::*, settings::*, title_scene::TitleScene};
 use tetra::{Context, Result, input::{Key, self}, math::Vec2, graphics::text::{Text, Font}};
 
+// A simple pause screen that keeps the game displayed in the background.
+
 pub struct PauseScene { }
 
 impl PauseScene {

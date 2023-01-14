@@ -5,6 +5,11 @@ use tetra::graphics::text::{Text, Font};
 use tetra::math::Vec2;
 use tetra::{Context, graphics::{self, Color}, input::{self, Key, MouseButton}, Result};
 
+/* 
+Starting scene for the game. Players can choose between PvP or Vs. AI.
+Players can also choose the color of their paddle.
+*/
+
 trait Button {
     fn position(&self) -> Vec2<f32>;
     fn width(&self) -> f32;
@@ -69,8 +74,8 @@ impl TitleScene {
             Font::vector(ctx, "./assets/OpenSans-Regular.ttf", FONT_SIZE * 2.0)?,
         );
         let instructions = Text::new(
-            "Press escape to exit.",
-            Font::vector(ctx, "./assets/OpenSans-Regular.ttf", FONT_SIZE)?,
+            "Player 1 moves with WASD\nPlayer 2 moves with Arrow Keys\nPress Enter to Pause/Continue",
+            Font::vector(ctx, "./assets/OpenSans-Regular.ttf", FONT_SIZE * 0.75)?,
         );
         let pvp_button = SelectButton::new(Vec2::new(WINDOW_WIDTH * 0.2, WINDOW_HEIGHT / 2.0),
                                             Texture::new(ctx, "./assets/button.png")?,
@@ -94,12 +99,13 @@ impl TitleScene {
                        button_size, button_size, color));
             y_position += button_size + offset;
         }
-        player1_colors[0].selected = true;
-        player2_colors[1].selected = true;
+        player1_colors[ 0 ].selected = true;
+        player2_colors[ 1 ].selected = true;
 
         Ok(TitleScene { title_text, instructions, pvp_button, vs_comp_button, player1_colors, player2_colors })
     }
 
+    // TODO: Store Color Selection for between games
     fn update_color_selection(&mut self, player: i32, mouse_position: Vec2<f32>) {
         let selection = if player == 1 { &mut self.player1_colors } else { &mut self.player2_colors };
         let mut index = -1;

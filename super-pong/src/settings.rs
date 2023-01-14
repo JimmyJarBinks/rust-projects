@@ -1,5 +1,7 @@
 use tetra::{math::Vec2, Context, graphics::{text::Text, Color}};
 
+// List of settings used throughout the program.
+
 pub const WINDOW_WIDTH: f32 = 640.0;
 pub const WINDOW_HEIGHT: f32 = 480.0;
 pub const CENTER: Vec2<f32> = Vec2::new(WINDOW_WIDTH / 2.0, WINDOW_HEIGHT / 2.0);

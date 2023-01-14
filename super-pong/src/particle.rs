@@ -3,6 +3,8 @@ use rand::{thread_rng, Rng};
 use tetra::graphics::Texture;
 use tetra::math::Vec2;
 
+// Particles are spawned when the ball collides with paddles and walls.
+
 pub struct Particle {
     pub texture: Texture,
     pub position: Vec2<f32>,

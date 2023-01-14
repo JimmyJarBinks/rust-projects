@@ -13,8 +13,7 @@ use self::scene::*;
 use self::settings::*;
 use tetra::{ContextBuilder, Context, State, Result, graphics, window};
 
-// enhancement of tetra pong tutorial (https://tetra.seventeencups.net/tutorial)
-// scenes inspired by tetras.rs (https://github.com/17cupsofcoffee/tetra/blob/main/examples/tetras.rs)
+// Enhancement of Tetra pong tutorial (https://tetra.seventeencups.net/tutorial).
 
 struct GameState {
     scenes: Vec<Box<dyn Scene>>,
@@ -50,12 +49,12 @@ impl State for GameState {
 
     fn draw(&mut self, ctx: &mut Context) -> Result {
         match self.scenes.last_mut() {
-            Some(active_scene) => match active_scene.draw(ctx)? {
+            Some(current) => match current.draw(ctx)? {
                 Transition::None => {}
                 Transition::Push(s) => { self.scenes.push(s); }
                 Transition::Pop => { self.scenes.pop(); }
                 Transition::NewGame(s) => {
-                    self.scenes.pop();
+                    self.scenes.clear();
                     self.scenes.push(s); 
                 }
             },

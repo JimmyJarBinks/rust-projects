@@ -5,6 +5,8 @@ use tetra::input::{self, Key};
 use tetra::math::Vec2;
 use tetra::{Context, Result};
 
+// The scene that handles in-game events.
+
 pub struct GameScene {
     player1: Entity,
     player2: Entity,

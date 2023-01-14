@@ -2,6 +2,8 @@ use crate::settings::*;
 use tetra::graphics::{Rectangle, Texture};
 use tetra::math::Vec2;
 
+// Defines the logic for game entities (Paddles and Balls).
+
 pub struct Entity {
     pub texture: Texture,
     pub position: Vec2<f32>,
