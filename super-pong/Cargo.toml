@@ -1,0 +1,8 @@
+[package]
+name = "super-pong"
+version = "1.0.0"
+edition = "2021"
+
+[dependencies]
+rand = "0.7.3"
+tetra = "0.7"
