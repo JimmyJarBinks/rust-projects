@@ -1,11 +1,17 @@
-use std::{env, error::Error, fs, process, slice::Chunks};
+use std::{env, error::Error, fs, process};
 
 const SUDOKU_SIZE: u32 = 9;
 
+enum PuzzleType {
+    Sudoku,
+}
+
 trait Puzzle {
-    fn build(contents: &mut String) -> Self;
-    fn is_solvable() -> bool;
-    fn solve();
+    fn build(contents: &mut String) -> Result<Self, Box<dyn Error>>
+    where
+        Self: Sized;
+    fn is_valid(&self) -> bool;
+    fn solve_puzzle(&self);
 }
 
 struct Sudoku {
@@ -13,31 +19,28 @@ struct Sudoku {
 }
 
 impl Puzzle for Sudoku {
-    fn build(contents: &mut String) -> Self {
+    fn build(contents: &mut String) -> Result<Self, Box<dyn Error>> {
         contents.retain(|c| !c.is_whitespace());
-        // TODO: Non-digit error
         let digits: Vec<u32> = contents.chars().filter_map(|c| c.to_digit(10)).collect();
-        println!("{:?}", digits); // TEMP
         if digits.len() == SUDOKU_SIZE.pow(2) as usize {
-            let board: Vec<Vec<u32>> = digits.chunks(9).map(|x| x.to_vec()).collect();
-            println!("{:?}", board);
-            Sudoku { board }
+            Ok(Sudoku {
+                board: digits
+                    .chunks(9)
+                    .map(|x| x.to_vec())
+                    .collect::<Vec<Vec<u32>>>(),
+            })
         } else {
-            //TODO: Incorrect size error
-            println!("Failed to read grid.");
-            Sudoku {
-                board: vec![vec![0; 9]; 9],
-            }
+            Err(Box::from(
+                "Failed to read puzzle. For sudoku, ensure there are 81 digits total and no non-digit characters .",
+            ))
         }
     }
 
-    fn is_solvable() -> bool {
-        true
+    fn is_valid(&self) -> bool {
+        false
     }
 
-    fn solve() {
-        todo!()
-    }
+    fn solve_puzzle(&self) {}
 }
 
 struct Command {
@@ -63,21 +66,29 @@ impl Command {
     }
 }
 
-fn solve_sudoku(contents: &mut String) {
-    let sudoku = Sudoku::build(contents);
+fn sudoku_puzzle(contents: &mut String) -> Result<(), Box<dyn Error>> {
+    let sudoku = Sudoku::build(contents)?;
+    println!("{:?}", sudoku.board);
+    sudoku.solve_puzzle();
+    println!("{:?}", sudoku.board);
+    Ok(())
 }
 
 fn run(command: Command) -> Result<(), Box<dyn Error>> {
+    let puzzle: PuzzleType = match command.puzzle.as_str() {
+        "sudoku" => PuzzleType::Sudoku,
+        _ => return Err(Box::from("Specified puzzle not supported")),
+    };
+
     let mut contents = fs::read_to_string(command.filename)?;
     println!(
         "Solving Puzzle: {}",
         command.puzzle[0..1].to_uppercase() + &command.puzzle[1..]
     );
-    match command.puzzle.as_str() {
-        "sudoku" => solve_sudoku(&mut contents),
-        _ => println!("Not Supported"),
+
+    match puzzle {
+        PuzzleType::Sudoku => sudoku_puzzle(&mut contents),
     }
-    Ok(())
 }
 
 fn main() {
