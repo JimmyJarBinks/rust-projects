@@ -1,46 +1,18 @@
+mod sudoku;
+
 use std::{env, error::Error, fs, process};
 
-const SUDOKU_SIZE: u32 = 9;
+use sudoku::*;
 
 trait Puzzle {
     fn build(contents: &mut String) -> Result<Self, Box<dyn Error>>
     where
         Self: Sized;
-    fn is_valid(&self) -> bool;
-    fn solve_puzzle(&self);
+    fn solve(&mut self);
 }
 
 enum PuzzleType {
     Sudoku,
-}
-
-struct Sudoku {
-    board: Vec<Vec<u32>>,
-}
-
-impl Puzzle for Sudoku {
-    fn build(contents: &mut String) -> Result<Self, Box<dyn Error>> {
-        contents.retain(|c| !c.is_whitespace());
-        let digits: Vec<u32> = contents.chars().filter_map(|c| c.to_digit(10)).collect();
-        if digits.len() == SUDOKU_SIZE.pow(2) as usize {
-            Ok(Sudoku {
-                board: digits
-                    .chunks(9)
-                    .map(|x| x.to_vec())
-                    .collect::<Vec<Vec<u32>>>(),
-            })
-        } else {
-            Err(Box::from(
-                "Failed to read puzzle. For sudoku, ensure there are 81 digits total and no non-digit characters (whitespace is acceptable).",
-            ))
-        }
-    }
-
-    fn is_valid(&self) -> bool {
-        false
-    }
-
-    fn solve_puzzle(&self) {}
 }
 
 #[derive(Debug, PartialEq)]
@@ -68,9 +40,9 @@ impl Command {
 }
 
 fn sudoku_puzzle(contents: &mut String) -> Result<(), Box<dyn Error>> {
-    let sudoku = Sudoku::build(contents)?;
+    let mut sudoku = Sudoku::build(contents)?;
     println!("{:?}", sudoku.board);
-    sudoku.solve_puzzle();
+    sudoku.solve();
     println!("{:?}", sudoku.board);
     Ok(())
 }
@@ -107,6 +79,7 @@ fn main() {
 mod tests {
 
     use super::*;
+
     #[test]
     fn test_empty_command() {
         let args = [String::new(); 0];
@@ -116,7 +89,6 @@ mod tests {
             Err("At least 1 argument is required to specify puzzle type.")
         )
     }
-    // TODO: Compare errors
     #[test]
     fn test_unsupported_puzzle() {
         let result = run(Command {
