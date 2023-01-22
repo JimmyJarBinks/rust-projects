@@ -99,12 +99,12 @@ impl Puzzle for Sudoku {
         }
     }
 
-    fn solve(&mut self) {
+    fn solve(&mut self) -> bool {
         if self.is_valid() && self.fill_board(0, 0) {
-            println!("Sudoku puzzle solved. Writing to solution.txt")
-        } else {
-            println!("Failed to solve sudoku puzzle.")
+            println!("Sudoku puzzle solved. Writing to solution.txt");
+            return true;
         }
+        false
     }
 
     fn format(&self) -> String {

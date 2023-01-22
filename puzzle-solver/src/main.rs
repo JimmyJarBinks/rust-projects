@@ -38,7 +38,7 @@ trait Puzzle {
     fn build(contents: &mut String) -> Result<Self, Box<dyn Error>>
     where
         Self: Sized;
-    fn solve(&mut self);
+    fn solve(&mut self) -> bool;
     fn format(&self) -> String;
 }
 
@@ -48,8 +48,10 @@ enum PuzzleType {
 
 fn sudoku_puzzle(contents: &mut String) -> Result<String, Box<dyn Error>> {
     let mut sudoku = Sudoku::build(contents)?;
-    sudoku.solve();
-    Ok(sudoku.format())
+    match sudoku.solve() {
+        true => Ok(sudoku.format()),
+        false => Err(Box::from("The given puzzle could not be solved.")),
+    }
 }
 
 fn run(command: Command) -> Result<(), Box<dyn Error>> {
