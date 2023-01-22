@@ -9,23 +9,49 @@ pub struct Sudoku {
 }
 
 impl Sudoku {
-    fn safe_space(&self, row: usize, col: usize, candidate: u32) -> bool {
-        let rows_safe = !self.board[row].contains(&candidate);
-        let columns_safe = self
-            .board
+    fn safe_row(&self, row: usize, col: usize, candidate: u32) -> bool {
+        let intersecting_val = self.board[row].iter().position(|&x| x == candidate);
+        (Option::is_none(&intersecting_val)) || (intersecting_val == Some(col))
+    }
+
+    fn safe_col(&self, row: usize, col: usize, candidate: u32) -> bool {
+        self.board
             .iter()
             .filter(|row| row[col] == candidate)
             .count()
-            == 0;
+            == 0
+            || self.board[row][col] == candidate
+    }
+
+    fn safe_matrix(&self, row: usize, col: usize, candidate: u32) -> bool {
         let (start_row, start_col) = (row - row % 3, col - col % 3);
-        for r in 0..3 {
-            for c in 0..3 {
-                if self.board[r + start_row][c + start_col] == candidate {
+        for r in start_row..(start_row + 3) {
+            for c in start_col..(start_col + 3) {
+                if self.board[r][c] == candidate && r != row && c != col {
                     return false;
                 }
             }
         }
-        rows_safe && columns_safe
+        true
+    }
+
+    fn safe_space(&self, row: usize, col: usize, candidate: u32) -> bool {
+        let row_safe = self.safe_row(row, col, candidate);
+        let col_safe = self.safe_col(row, col, candidate);
+        let matrix_safe = self.safe_matrix(row, col, candidate);
+        row_safe && col_safe && matrix_safe
+    }
+
+    fn is_valid(&self) -> bool {
+        for row in 0..SUDOKU_SIZE as usize {
+            for col in 0..SUDOKU_SIZE as usize {
+                let filled = self.board[row][col];
+                if !self.safe_space(row, col, filled) && filled != 0 {
+                    return false;
+                }
+            }
+        }
+        true
     }
 
     // Backtracking Algorithm
@@ -74,7 +100,7 @@ impl Puzzle for Sudoku {
     }
 
     fn solve(&mut self) {
-        if self.fill_board(0, 0) {
+        if self.is_valid() && self.fill_board(0, 0) {
             println!("Sudoku puzzle solved. Writing to solution.txt")
         } else {
             println!("Failed to solve sudoku puzzle.")
