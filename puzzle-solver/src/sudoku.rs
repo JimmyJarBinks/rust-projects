@@ -17,21 +17,18 @@ impl Sudoku {
             .filter(|row| row[col] == candidate)
             .count()
             == 0;
-        // TODO: Reduce matrix_safe code
-        let mut matrix_safe = true;
-        let start_row = row - row % 3;
-        let start_col = col - col % 3;
+        let (start_row, start_col) = (row - row % 3, col - col % 3);
         for r in 0..3 {
             for c in 0..3 {
                 if self.board[r + start_row][c + start_col] == candidate {
-                    matrix_safe = false;
-                    break;
+                    return false;
                 }
             }
         }
-        rows_safe && columns_safe && matrix_safe
+        rows_safe && columns_safe
     }
 
+    // Backtracking Algorithm
     fn fill_board(&mut self, mut row: usize, mut col: usize) -> bool {
         let max = SUDOKU_SIZE as usize;
         if col == max {
@@ -76,9 +73,19 @@ impl Puzzle for Sudoku {
         }
     }
 
-    // Currently uses a backtracking algorithm
     fn solve(&mut self) {
-        let success = self.fill_board(0, 0);
-        println!("{success}");
+        if self.fill_board(0, 0) {
+            println!("Sudoku puzzle solved. Writing to solution.txt")
+        } else {
+            println!("Failed to solve sudoku puzzle.")
+        }
+    }
+
+    fn format(&self) -> String {
+        self.board
+            .iter()
+            .map(|row| format!("{:?}", row))
+            .collect::<Vec<String>>()
+            .join("\n")
     }
 }

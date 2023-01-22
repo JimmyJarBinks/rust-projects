@@ -1,19 +1,14 @@
 mod sudoku;
 
-use std::{env, error::Error, fs, process};
-
+use std::{
+    env,
+    error::Error,
+    fs::{self, File},
+    io::Write,
+    path::Path,
+    process,
+};
 use sudoku::*;
-
-trait Puzzle {
-    fn build(contents: &mut String) -> Result<Self, Box<dyn Error>>
-    where
-        Self: Sized;
-    fn solve(&mut self);
-}
-
-enum PuzzleType {
-    Sudoku,
-}
 
 #[derive(Debug, PartialEq)]
 struct Command {
@@ -39,12 +34,22 @@ impl Command {
     }
 }
 
-fn sudoku_puzzle(contents: &mut String) -> Result<(), Box<dyn Error>> {
+trait Puzzle {
+    fn build(contents: &mut String) -> Result<Self, Box<dyn Error>>
+    where
+        Self: Sized;
+    fn solve(&mut self);
+    fn format(&self) -> String;
+}
+
+enum PuzzleType {
+    Sudoku,
+}
+
+fn sudoku_puzzle(contents: &mut String) -> Result<String, Box<dyn Error>> {
     let mut sudoku = Sudoku::build(contents)?;
-    println!("{:?}", sudoku.board);
     sudoku.solve();
-    println!("{:?}", sudoku.board);
-    Ok(())
+    Ok(sudoku.format())
 }
 
 fn run(command: Command) -> Result<(), Box<dyn Error>> {
@@ -53,15 +58,22 @@ fn run(command: Command) -> Result<(), Box<dyn Error>> {
         _ => return Err(Box::from("The specified puzzle is not supported.")),
     };
 
-    let mut contents = fs::read_to_string(command.filename)?;
+    let mut contents = fs::read_to_string(command.filename.clone())?;
     println!(
         "Solving Puzzle: {}",
         command.puzzle[0..1].to_uppercase() + &command.puzzle[1..]
     );
 
-    match puzzle {
-        PuzzleType::Sudoku => sudoku_puzzle(&mut contents),
-    }
+    let solution = match puzzle {
+        PuzzleType::Sudoku => sudoku_puzzle(&mut contents)?,
+    };
+
+    let path = Path::new("solution.txt");
+    let mut file = File::create(path)?;
+    file.write_all(format!("Solution to puzzle: {}\n", command.filename).as_bytes())?;
+    file.write_all(solution.as_bytes())?;
+
+    Ok(())
 }
 
 fn main() {
