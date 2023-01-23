@@ -4,7 +4,7 @@ Super Pong is my first project using the Rust programming language. Upon discove
 * Multiple scenes including the title and pause screens
 * 2 selectable game modes: Player vs. Player and Player vs. Computer
 * 5 colors for each player's paddle
-* A first-to-10 scoring system to allow for the game to end and be replayed.
+* A first-to-10 scoring system to allow for the game to end and be replayed
 * Particles, sound effects, and more!
 
 Credit to [Kenney.nl] for visual and audio assets.
