@@ -1,6 +1,8 @@
+mod nonogram;
 mod sudoku;
 mod tests;
 
+use nonogram::Nonogram;
 use std::{
     error::Error,
     fs::{self, File},
@@ -41,8 +43,10 @@ trait Puzzle {
     fn format(&self) -> String;
 }
 
+#[derive(Debug)]
 enum PuzzleType {
     Sudoku,
+    Nonogram,
 }
 
 fn sudoku_puzzle(contents: &mut String) -> Result<String, Box<dyn Error>> {
@@ -53,9 +57,16 @@ fn sudoku_puzzle(contents: &mut String) -> Result<String, Box<dyn Error>> {
     }
 }
 
+fn nonogram_puzzle(contents: &mut String) -> Result<String, Box<dyn Error>> {
+    let mut nonogram = Nonogram::build(contents)?;
+    nonogram.solve();
+    Ok(nonogram.format())
+}
+
 pub fn run(command: Command) -> Result<(), Box<dyn Error>> {
     let puzzle: PuzzleType = match command.puzzle.as_str() {
         "sudoku" => PuzzleType::Sudoku,
+        "nonogram" => PuzzleType::Nonogram,
         _ => return Err(Box::from("The specified puzzle is not supported.")),
     };
 
@@ -68,8 +79,10 @@ pub fn run(command: Command) -> Result<(), Box<dyn Error>> {
 
     let solution = match puzzle {
         PuzzleType::Sudoku => sudoku_puzzle(&mut contents)?,
+        PuzzleType::Nonogram => nonogram_puzzle(&mut contents)?,
     };
 
+    println!("{:?} puzzle solved. Writing to solution.txt", puzzle);
     let path = Path::new("solution.txt");
     let mut file = File::create(path)?;
     file.write_all(format!("Solution to puzzle: {}\n", command.filename).as_bytes())?;

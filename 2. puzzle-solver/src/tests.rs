@@ -39,7 +39,7 @@ mod tests {
         let sudoku = Sudoku::build(&mut contents).unwrap_err();
         assert_eq!(
             sudoku.to_string(),
-            "Failed to read puzzle. For sudoku, ensure there are 81 digits total."
+            "Failed to read puzzle. For Sudoku, ensure there are 81 digits total."
         )
     }
     #[test]

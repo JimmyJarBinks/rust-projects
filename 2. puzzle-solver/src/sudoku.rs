@@ -95,17 +95,13 @@ impl Puzzle for Sudoku {
             })
         } else {
             Err(Box::from(
-                "Failed to read puzzle. For sudoku, ensure there are 81 digits total.",
+                "Failed to read puzzle. For Sudoku, ensure there are 81 digits total.",
             ))
         }
     }
 
     fn solve(&mut self) -> bool {
-        if self.is_valid() && self.fill_board(0, 0) {
-            println!("Sudoku puzzle solved. Writing to solution.txt");
-            return true;
-        }
-        false
+        self.is_valid() && self.fill_board(0, 0)
     }
 
     fn format(&self) -> String {
