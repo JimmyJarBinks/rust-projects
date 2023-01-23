@@ -4,6 +4,7 @@ use crate::Puzzle;
 
 pub const SUDOKU_SIZE: u32 = 9;
 
+#[derive(Debug)]
 pub struct Sudoku {
     pub board: Vec<Vec<u32>>,
 }
