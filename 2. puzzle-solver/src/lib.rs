@@ -59,6 +59,7 @@ fn sudoku_puzzle(contents: &mut String) -> Result<String, Box<dyn Error>> {
 
 fn nonogram_puzzle(contents: &mut String) -> Result<String, Box<dyn Error>> {
     let mut nonogram = Nonogram::build(contents)?;
+    println!("Warning: Nonogram solving algorithm is poorly optimized. Large puzzles may take a while to solve.");
     match nonogram.solve() {
         true => Ok(nonogram.format()),
         false => Err(Box::from("The given nonogram could not be solved.")),
@@ -78,6 +79,7 @@ pub fn run(command: Command) -> Result<(), Box<dyn Error>> {
         command.filename
     );
     let mut contents = fs::read_to_string(command.filename.clone())?;
+    println!("...Solving...");
 
     let solution = match puzzle {
         PuzzleType::Sudoku => sudoku_puzzle(&mut contents)?,
