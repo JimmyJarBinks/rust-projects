@@ -53,14 +53,16 @@ fn sudoku_puzzle(contents: &mut String) -> Result<String, Box<dyn Error>> {
     let mut sudoku = Sudoku::build(contents)?;
     match sudoku.solve() {
         true => Ok(sudoku.format()),
-        false => Err(Box::from("The given puzzle could not be solved.")),
+        false => Err(Box::from("The given sudoku could not be solved.")),
     }
 }
 
 fn nonogram_puzzle(contents: &mut String) -> Result<String, Box<dyn Error>> {
     let mut nonogram = Nonogram::build(contents)?;
-    nonogram.solve();
-    Ok(nonogram.format())
+    match nonogram.solve() {
+        true => Ok(nonogram.format()),
+        false => Err(Box::from("The given nonogram could not be solved.")),
+    }
 }
 
 pub fn run(command: Command) -> Result<(), Box<dyn Error>> {

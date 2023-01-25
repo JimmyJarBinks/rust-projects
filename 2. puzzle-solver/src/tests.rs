@@ -46,7 +46,7 @@ mod tests {
     fn test_unsolvable_sudoku() {
         let mut contents = String::from_utf8(vec![b'3'; 81]).unwrap();
         let status = sudoku_puzzle(&mut contents).unwrap_err();
-        assert_eq!(status.to_string(), "The given puzzle could not be solved.")
+        assert_eq!(status.to_string(), "The given sudoku could not be solved.")
     }
     #[test]
     fn test_solvable_sudoku() {
