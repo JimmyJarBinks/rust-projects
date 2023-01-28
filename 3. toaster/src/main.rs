@@ -1,16 +1,42 @@
+use chrono::{Local, Timelike};
 use std::time::Duration;
-use chrono::Local;
 use winrt_notification::{Sound, Toast};
 
-const INTERVAL_TIME: u64 = 10;
+const INTERVAL_TIME: u64 = 30;
 
-/*
-fn configure_message() -> (String, String, String) {
-    (String::new(), String::new(), String::new())
+enum Time {
+    Morning,
+    Day,
+    Night,
+    Late,
 }
-*/
 
-async fn create_notification(title: &str, text1: &str, text2: &str) -> Toast {
+fn configure_message(time: Time) -> (&'static str, &'static str, &'static str) {
+    match time {
+        Time::Morning => (
+            "Remember to sit up straight",
+            "Or better yet, do some stretches.",
+            "The day is still young!.",
+        ),
+        Time::Day => (
+            "Remember to sit up straight",
+            "Or better yet, take a quick break.",
+            "Your back will thank you later.",
+        ),
+        Time::Night => (
+            "Remember to sit up straight",
+            "Or better yet, get some shuteye",
+            "Bluelight can make it hard to fall asleep",
+        ),
+        Time::Late => (
+            "Ok what are you doing.",
+            "Go sleep now.",
+            "Please.",
+        ),
+    }
+}
+
+fn create_notification(title: &str, text1: &str, text2: &str) -> Toast {
     Toast::new(Toast::POWERSHELL_APP_ID)
         .title(title)
         .text1(text1)
@@ -24,15 +50,18 @@ async fn main() {
     let mut interval = tokio::time::interval(Duration::from_secs(INTERVAL_TIME));
     loop {
         interval.tick().await;
-        let toast = create_notification(
-            "Remember to sit up straight",
-            "Or better yet, take a quick break.",
-            "Your back will thank you later.",
-        );
 
-        let dt = Local::now();
-        println!("{}", dt);
+        let date =Local::now();
+        let time_of_day = match (date.hour(), date.minute()) {
+            (6..=9, ..) => Time::Morning,
+            (10..=21, ..) => Time::Day,
+            (22 | 23 | 0, ..) => Time::Night,
+            (1..=5, ..) => Time::Late,
+            _ => Time::Day,
+        };
 
-        toast.await.show().expect("unable to toast");
+        let toast_text = configure_message(time_of_day);
+        let toast = create_notification(toast_text.0, toast_text.1, toast_text.2);
+        toast.show().expect("unable to toast");
     }
 }
