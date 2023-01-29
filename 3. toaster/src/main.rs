@@ -1,8 +1,11 @@
+#![windows_subsystem = "windows"]
+
 use chrono::{Local, Timelike};
 use std::time::Duration;
 use winrt_notification::{Sound, Toast};
 
-const INTERVAL_TIME: u64 = 30;
+// Time between notifications (in seconds)
+const INTERVAL_TIME: u64 = 15 * 60;
 
 enum Time {
     Morning,
@@ -16,7 +19,7 @@ fn configure_message(time: Time) -> (&'static str, &'static str, &'static str) {
         Time::Morning => (
             "Remember to sit up straight",
             "Or better yet, do some stretches.",
-            "The day is still young!.",
+            "The day is still young!",
         ),
         Time::Day => (
             "Remember to sit up straight",
@@ -28,11 +31,7 @@ fn configure_message(time: Time) -> (&'static str, &'static str, &'static str) {
             "Or better yet, get some shuteye",
             "Bluelight can make it hard to fall asleep",
         ),
-        Time::Late => (
-            "Ok what are you doing.",
-            "Go sleep now.",
-            "Please.",
-        ),
+        Time::Late => ("Ok what are you doing.", "Go sleep now.", "Please."),
     }
 }
 
@@ -47,11 +46,16 @@ fn create_notification(title: &str, text1: &str, text2: &str) -> Toast {
 
 #[tokio::main]
 async fn main() {
+    ctrlc::set_handler(move || {
+        std::process::exit(0);
+    })
+    .expect("error setting ctrl-c handler");
+
     let mut interval = tokio::time::interval(Duration::from_secs(INTERVAL_TIME));
     loop {
         interval.tick().await;
 
-        let date =Local::now();
+        let date = Local::now();
         let time_of_day = match (date.hour(), date.minute()) {
             (6..=9, ..) => Time::Morning,
             (10..=21, ..) => Time::Day,
