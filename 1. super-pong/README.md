@@ -1,6 +1,6 @@
 # Super Pong
 
-Super Pong is my first project using the Rust programming language. Upon discovering Rust in 2022, reading through an abundance of documentation and tutorials, and experimenting with smaller scripts of my own, I began exploring the application of Rust for game development. I ultimately settled on using the [Tetra] framework for this project due to its accessibility. This project began with the [official Tetra tutorial] and a subsequent desire to expand on it. Compared to the original tutorial, Super Pong adds the following:
+Upon discovering Rust in 2022, reading through an abundance of documentation and tutorials, and experimenting with smaller scripts of my own, I began exploring the application of Rust for game development. I ultimately settled on using the [Tetra] framework for this project due to its accessibility. This project began with the [official Tetra tutorial] and a subsequent desire to expand on it. Compared to the original tutorial, Super Pong adds the following:
 * Multiple scenes including the title and pause screens
 * 2 selectable game modes: Player vs. Player and Player vs. Computer
 * 5 colors for each player's paddle
